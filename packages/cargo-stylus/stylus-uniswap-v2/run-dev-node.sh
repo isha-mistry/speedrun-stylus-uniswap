@@ -11,6 +11,17 @@ fi
 echo "Cleaning up any existing nitro-dev container..."
 docker rm -f nitro-dev 2>/dev/null || true
 
+# Check for wasm32-unknown-unknown target
+echo "Checking for wasm32-unknown-unknown target..."
+if ! rustup target list --installed | grep -q "wasm32-unknown-unknown"; then
+  echo "Installing wasm32-unknown-unknown target..."
+  rustup target add wasm32-unknown-unknown
+fi
+
+# Clean up any existing container
+echo "Cleaning up any existing nitro-dev container..."
+docker rm -f nitro-dev 2>/dev/null || true
+
 # Start Nitro dev node in the background
 echo "Starting Nitro dev node..."
 docker run --rm --name nitro-dev -p 8547:8547 offchainlabs/nitro-node:v3.2.1-d81324d --dev --http.addr 0.0.0.0 --http.api=net,web3,eth,debug --http.corsdomain="*" &
